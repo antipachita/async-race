@@ -1,0 +1,184 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-decoration: none;
+}
+
+body {
+    background-color: rgb(0, 0, 0);
+}
+
+/* header */
+
+header {
+    margin-bottom: 1%;
+}
+
+nav {
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-button {
+    text-align: center;
+    background-color: greenyellow;
+    margin-right: 1%;
+    width: 10%;
+    padding: 0.5%;
+    box-shadow: 1px 5px 5px #97c188;
+    cursor: pointer;
+}
+
+/* option-panel */
+
+.create-panel {
+    display: flex;
+    justify-content: space-between;
+    width: 25%;
+}
+
+.control-panel-item {
+    margin-right: 1%;
+}
+
+.update-panel {
+    display: flex;
+    justify-content: space-between;
+    width: 25%;
+}
+
+.panel-item {
+    margin-bottom: 1%;
+}
+
+.garage-panel {
+    display: flex;
+    justify-content: space-between;
+    width: 25%;
+}
+
+.garage-button {
+    text-align: center;
+    background-color: greenyellow;
+    margin-right: 1%;
+    width: 25%;
+    padding: 0.5%;
+    box-shadow: 1px 5px 5px #97c188;
+    cursor: pointer;
+}
+
+.create-placeholder{
+    width: 63%;
+}
+
+.update-placeholder{
+    width: 63%;
+}
+
+/* garage */
+
+.garage {
+    display: flex;
+    flex-direction: column;
+    margin-top: 4%;
+}
+
+.garage-counter {
+    font-size: 38px;
+    color: rgb(255, 255, 255);
+    margin-bottom: 1%;
+}
+
+.page-number {
+    font-size: 28px;
+    color: rgb(255, 255, 255);
+}
+
+.cars-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* car-style */
+
+.car {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1%;
+}
+
+.control-car-btns {
+    display: flex;
+    justify-content: space-between;
+    width: 20%;
+}
+
+.control-car-button {
+    margin-right: 2%;
+}
+
+.select-btn {
+    text-align: center;
+    background-color: rgb(234, 255, 47);
+    margin-right: 1%;
+    width: 25%;
+    padding: 0.5%;
+    box-shadow: 1px 5px 5px #97c188;
+    cursor: pointer;
+}
+
+.remove-btn {
+    text-align: center;
+    background-color: rgb(234, 255, 47);
+    margin-right: 1%;
+    width: 25%;
+    padding: 0.5%;
+    box-shadow: 1px 5px 5px #97c188;
+    cursor: pointer;
+}
+
+.model {
+    color: antiquewhite;
+    width: 40%;
+}
+
+.engine-btns {
+    display: flex;
+}
+
+.engine-btn {
+    color: white;
+    margin: 1% 1% 1% 0;
+    padding: 0.2%;
+    border: 2px wheat solid;
+    border-radius: 10%;
+    cursor: pointer;
+}
+
+
+.race-track-item {
+    padding: 0 2%;
+}
+
+/* nav-page  */
+
+.nav-page {
+    display: flex;
+}
+
+.nav-page-btn {
+    text-align: center;
+    background-color: rgb(207, 90, 31);
+    margin-right: 1%;
+    width: 10%;
+    padding: 0.5%;
+    box-shadow: 1px 5px 5px #c81818;
+    cursor: pointer;  
+}
+
+#car-1 {
+    transform: matrix(0.2, 0, 0, 0.2, 25, 5.5) scale(-1, 1);
+
+}
