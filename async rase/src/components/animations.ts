@@ -60,7 +60,7 @@ export async function animationRun(id: number): Promise<any> {
   await api.checkEngine(id).then(function (res) {
     if (res === true) isRace = false;
   });     
-  return { date: (Date.now() - date) / 1000, car: car , isRace };
+  return { date: (Date.now() - date) / 1000, car: car , raceStatus: isRace, id: car.id.slice(4)};
 }
 
 export async function animationReset(id: number): Promise<void> {

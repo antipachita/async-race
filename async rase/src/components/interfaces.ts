@@ -9,4 +9,9 @@ export interface EngineStatus {
   distance: number;
 }
 
+export interface Winner {
+  id: number;
+  wins: number;
+  time: number;
+}
 

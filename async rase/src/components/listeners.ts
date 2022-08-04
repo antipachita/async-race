@@ -83,14 +83,16 @@ class Listeners {
 
   async createRaceListener(): Promise<void> {
     document.querySelector('.race-btn')?.addEventListener('click', async function() {
-      let currentPage = document.querySelector('.page-num')?.textContent;
+      const currentPage = document.querySelector('.page-num')?.textContent;
       const resp = await fetch(`http://127.0.0.1:3000/garage?_page=${currentPage}&_limit=7`).then(value => value.json());
       const arrPromis = [];
 
       for (let i = 0; i < resp.length; i ++) {  arrPromis.push(animationRun(resp[i].id)); }
       const raseResults = await Promise.all(arrPromis);
-      console.log(raseResults)
-      console.log(raseResults.filter(car => car.isRace === true).sort((a, b) => a.date - b.date)[0])
+      const winner = await raseResults.filter(car => car.raceStatus === true).sort((a, b) => a.date - b.date)[0];
+      console.log(winner)
+      await api.createWinner(+winner.id, winner.date);
+      console.log(await api.getWinners())
     });
   }
 

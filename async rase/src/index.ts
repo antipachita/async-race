@@ -1,19 +1,18 @@
 import {render} from './components/render';
 import './global.css';
 import api from './components/api-functions';
-import {CreateListeners} from './components/listeners';
-import { EngineStatus } from './components/interfaces';
+import { creatrlocRes } from './components/location-resolver';
+import { garage } from './components/view-garage'
 
 
 
 render.renderHtml();
-api.getGaragePage();
-CreateListeners.createAddCarListener();
-CreateListeners.createUpdateCarListener();
-CreateListeners.createScrollPagebtn();
-CreateListeners.createGenerateCarListener();
-CreateListeners.createRaceListener();
-CreateListeners.createResetListener();
+garage.renderGarage();
+
+creatrlocRes();
+
+
+
 
 
 

@@ -1,6 +1,8 @@
 import {render} from './render';
 import { Car } from './interfaces';
+import { Winner } from './interfaces';
 import { EngineStatus } from './interfaces';
+import { dataStorage } from './storage';
 
 
 async function getGaragePage(pageId: string = "1"): Promise<any> {
@@ -14,13 +16,27 @@ async function getGaragePage(pageId: string = "1"): Promise<any> {
   updateCounter();
 }
 
+async function getWinnersPage(pageId: string = "1"): Promise<any> {
+  const res = await fetch(
+    `http://127.0.0.1:3000/winners?_page=${pageId}&_limit=10&_sort=id&_order=ASC`,
+    {
+      method: 'GET',
+    },
+  );
+  const winnersArr = await res.json();
+  for (let i = 0; i < winnersArr.length; i += 1) {
+    const car  = await getCarInfo(winnersArr[i].id)
+    render.renderWinner(winnersArr[i], i+1, car.name!, car.color!);
+  }
+}
+
 async function updateCounter():Promise<void> {
   const resp = await fetch(`http://127.0.0.1:3000/garage`);
   const carsArr = await resp.json();
   document.querySelector('.garage-counter')!.innerHTML = `Garage ${carsArr.length}`;
 }
 
-async function getCarInfo(id: number | undefined):Promise<void> {
+async function getCarInfo(id: number | undefined):Promise<Car> {
   const resp = await fetch(`http://127.0.0.1:3000/garage/${id}`);
   const carInfo = await resp.json();
   return carInfo;
@@ -113,5 +129,33 @@ async function stopEngine(id: number): Promise<void> {
   }
 }
 
+async function createWinner(id: number, time: number): Promise<void> {
+  try {
+    await fetch('http://127.0.0.1:3000/winners', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: id, wins: 1, time: time }),
+    });
+  } catch (err) {
+    throw err;
+  }
+}
 
-export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine };
+async function getWinners(): Promise<Array<Winner> | undefined> {
+  try {
+    const res = await fetch(
+      `http://127.0.0.1:3000/winners?_page=1&_limit=10&_sort=id&_order=ASC`,
+      {
+        method: 'GET',
+      },
+    );
+    if (res.ok) {
+      return (await res.json()) as Array<Winner>;
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+
+export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine, createWinner, getWinners, getWinnersPage };
