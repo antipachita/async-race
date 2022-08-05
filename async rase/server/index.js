@@ -24,11 +24,7 @@ const db = {
         },
     ],
     winners: [
-        {
-            id: 1,
-            wins: 1,
-            time: 10,
-        }
+       
     ]
 };
 

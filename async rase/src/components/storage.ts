@@ -1,8 +1,8 @@
 class Storage {
-  carCount: number;
+  engineIsRun: Array<boolean>;
 
   constructor() {
-    this.carCount = 0;
+    this.engineIsRun = [];
     
   }
 

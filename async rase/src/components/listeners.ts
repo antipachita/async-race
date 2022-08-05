@@ -2,6 +2,9 @@ import api from './api-functions';
 import randomFunc from './randomizer-funcs';
 import { animationRun } from './animations';
 import { animationReset } from './animations';
+import { Winner } from './interfaces';
+import { getCarX } from './helpers';
+import { dataStorage } from './storage';
 
 
 class Listeners {
@@ -14,14 +17,22 @@ class Listeners {
    });
   }
 
-  createRemoveCarListener(id: number, element: HTMLDivElement) :void {
+  async createRemoveCarListener(id: number, element: HTMLDivElement): Promise<void> {
     const removeBtn = (document.querySelector(`#remove-btn-${id}`)) as HTMLElement;
 
     removeBtn!.addEventListener('click', async function(e:Event) {
     const currentCar: HTMLDivElement = element;
     const id = (e.target as Element).id.slice(11);
 
-    api.deleteCar(Number(id));
+    await api.deleteCar(Number(id));
+    await api.checkWinner(Number(id)).then(function(res) {
+      if (res !== 404) {
+        api.deleteWinner(Number(id));
+        console.log('Данные победителя были удалены');
+      } else {
+        console.log('Данный автомобиль не был найден в таблице победителей');
+      }
+    });
     currentCar.remove();
     
     });
@@ -85,14 +96,35 @@ class Listeners {
     document.querySelector('.race-btn')?.addEventListener('click', async function() {
       const currentPage = document.querySelector('.page-num')?.textContent;
       const resp = await fetch(`http://127.0.0.1:3000/garage?_page=${currentPage}&_limit=7`).then(value => value.json());
+      let winner: any;
+      let checkFirstPromise = false;
       const arrPromis = [];
+      for (let i = 0; i < resp.length; i ++) { arrPromis.push(animationRun(resp[i].id)); }
+      arrPromis.forEach(async  function(car) {
+        winner = await car;
+        if (winner.raceStatus == true && checkFirstPromise == false) {
+          console.log(winner.name);
+          checkFirstPromise = true;
 
-      for (let i = 0; i < resp.length; i ++) {  arrPromis.push(animationRun(resp[i].id)); }
-      const raseResults = await Promise.all(arrPromis);
-      const winner = await raseResults.filter(car => car.raceStatus === true).sort((a, b) => a.date - b.date)[0];
-      console.log(winner)
-      await api.createWinner(+winner.id, winner.date);
-      console.log(await api.getWinners())
+          if (winner !== undefined) {
+            await api.checkWinner(Number(+winner.id)).then(async function(res) {
+              if (res !== 404) {
+                const winnerInfo = (await api.checkWinner(+winner.id)) as Winner;
+                await api.updateWinner(+winner.id, winnerInfo.wins! + 1, winnerInfo.time! > winner.date? winner.date: winnerInfo.time);
+                console.log('Данные победителя были обновлены');
+                
+              } else {
+                api.createWinner(+winner.id, winner.date); 
+                console.log('Автомобиль внесен в список победителей');
+             
+              }
+            });
+            
+          }
+          
+        }
+      })
+      
     });
   }
 
@@ -102,9 +134,51 @@ class Listeners {
       const resp = await fetch(`http://127.0.0.1:3000/garage?_page=${currentPage}&_limit=7`).then(value => value.json());
       const arrPromis = [];
 
-      for (let i = 0; i < resp.length; i ++) {  arrPromis.push(animationReset(resp[i].id)); }
+      for (let i = 0; i < resp.length; i ++) { arrPromis.push(animationReset(resp[i].id)); }
       await Promise.all(arrPromis);
       
+    });
+  }
+
+  async createScrollWinnersListener(): Promise<void> {
+    const prevBtn: Element | null = document.querySelector('.winner-prev-btn');
+    prevBtn?.addEventListener('click', async function() {
+      let currentPage = document.querySelector('#winners-page-counter')?.textContent;
+      let actualPage = document.querySelector('#winners-page-counter')!.textContent = String(+currentPage! - 1);
+      api.getWinnersPage(actualPage);
+    });
+
+    const nextbtn: Element | null = document.querySelector('.winner-next-btn');
+    nextbtn?.addEventListener('click', async function() {
+      let currentPage = document.querySelector('#winners-page-counter')?.textContent;
+      let actualPage = document.querySelector('#winners-page-counter')!.textContent = String(+currentPage! + 1);
+      api.getWinnersPage(actualPage);
+    });
+  }
+
+  createSortBtnsListener(): void {
+    const winSorDesctBtn: Element | null = document.querySelector('#wins-up-sort-arrow');
+    winSorDesctBtn?.addEventListener('click', async function() {
+      let currentPage = document.querySelector('#winners-page-counter')?.textContent;
+      api.getWinnersPage(currentPage!, "wins", "DESC");
+    });
+
+    const winSortAscBtn: Element | null = document.querySelector('#wins-down-sort-arrow');
+    winSortAscBtn?.addEventListener('click', async function() {
+      let currentPage = document.querySelector('#winners-page-counter')?.textContent;
+      api.getWinnersPage(currentPage!, "wins", "ASC");
+    });
+
+    const timeSorDesctBtn: Element | null = document.querySelector('#time-up-sort-arrow');
+    timeSorDesctBtn?.addEventListener('click', async function() {
+      let currentPage = document.querySelector('#winners-page-counter')?.textContent;
+      api.getWinnersPage(currentPage!, "time", "DESC");
+    });
+
+    const timeSortAscBtn: Element | null = document.querySelector('#time-down-sort-arrow');
+    timeSortAscBtn?.addEventListener('click', async function() {
+      let currentPage = document.querySelector('#winners-page-counter')?.textContent;
+      api.getWinnersPage(currentPage!, "time", "ASC");
     });
   }
 }

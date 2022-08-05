@@ -8,6 +8,8 @@ class Winners {
   render(): void {
     render.renderwinners();
     api.getWinnersPage();
+    CreateListeners.createScrollWinnersListener();
+    CreateListeners.createSortBtnsListener();
   }
 }
 

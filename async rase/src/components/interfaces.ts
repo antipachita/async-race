@@ -10,8 +10,8 @@ export interface EngineStatus {
 }
 
 export interface Winner {
-  id: number;
-  wins: number;
-  time: number;
+  id: number | null;
+  wins: number | null;
+  time: number | null;
 }
 

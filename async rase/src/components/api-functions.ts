@@ -16,19 +16,6 @@ async function getGaragePage(pageId: string = "1"): Promise<any> {
   updateCounter();
 }
 
-async function getWinnersPage(pageId: string = "1"): Promise<any> {
-  const res = await fetch(
-    `http://127.0.0.1:3000/winners?_page=${pageId}&_limit=10&_sort=id&_order=ASC`,
-    {
-      method: 'GET',
-    },
-  );
-  const winnersArr = await res.json();
-  for (let i = 0; i < winnersArr.length; i += 1) {
-    const car  = await getCarInfo(winnersArr[i].id)
-    render.renderWinner(winnersArr[i], i+1, car.name!, car.color!);
-  }
-}
 
 async function updateCounter():Promise<void> {
   const resp = await fetch(`http://127.0.0.1:3000/garage`);
@@ -157,5 +144,63 @@ async function getWinners(): Promise<Array<Winner> | undefined> {
   }
 }
 
+async function deleteWinner(id: number): Promise<void> {
+  try {
+    await fetch(`http://127.0.0.1:3000/winners/${id}`, {
+      method: 'DELETE',
+    });
+  } catch (err) {
+    throw err;
+  }
+}
 
-export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine, createWinner, getWinners, getWinnersPage };
+async function checkWinner(id: number): Promise<Winner | number | undefined > {
+  try {
+    const res = await fetch(`http://127.0.0.1:3000/winners/${id}`, {
+      method: 'GET',
+    });
+    if (res.ok) {
+      const winnerInfo = (await res.json()) as Winner;
+      return winnerInfo;
+    }
+    if (res.status === 404) {
+      return 404;
+    }
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function updateWinner(id: number, wins: number, time: number): Promise<void> {
+  try {
+    await fetch(`http://127.0.0.1:3000/winners/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ wins: wins, time: time }),
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getWinnersPage(pageId: string = "1", sort?: string, order?: string,): Promise<any> {
+  let sortOption: string = sort || "time";
+  let orderOption: string = order || "DESC";
+  const res = await fetch(
+    `http://127.0.0.1:3000/winners?_page=${pageId}&_limit=4&_sort=${sortOption}&_order=${orderOption}`,
+    {
+      method: 'GET',
+    },
+  );
+  const tbody: Element | null = document.querySelector('.tbody');
+  tbody!.innerHTML = '';
+  const winnersArr = await res.json();
+  for (let i = 0; i < winnersArr.length; i += 1) {
+    const car  = await getCarInfo(winnersArr[i].id)
+    render.renderWinner(winnersArr[i], i+1, car.name!, car.color!);
+  }
+}
+
+
+
+export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine, createWinner, getWinners, getWinnersPage, deleteWinner, checkWinner, updateWinner };

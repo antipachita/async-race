@@ -1,5 +1,6 @@
 import { getCarX } from './helpers';
 import api from './api-functions';
+import { dataStorage } from './storage';
 
 
 export async function createEngineRunBtn(id: number): Promise<void> {
@@ -19,7 +20,6 @@ export async function createEngineRunBtn(id: number): Promise<void> {
       }
     }
     engineRun();
-
     await api.checkEngine(id).then(function (res) {
       if (res === true) isRace = false;
     }); 
@@ -47,20 +47,22 @@ export async function animationRun(id: number): Promise<any> {
   car.classList.add('animated');
   let engineInfo = await api.startEngine(id);
   let isRace = true; 
+
+ 
     
   const engineRun = function () {
     let curentX = getCarX(car.style.transform);
-    car.style.transform = `matrix(0.2, 0, 0, 0.2, ${+curentX + engineInfo?.velocity!/150}, 5.5) scale(-1, 1)`;
+    car.style.transform = `matrix(0.2, 0, 0, 0.2, ${+curentX + engineInfo?.velocity!/120}, 5.5) scale(-1, 1)`;
     if (+(getCarX(car.style.transform)) < 290 && isRace === true && car.classList.contains('animated')) {
       window.requestAnimationFrame(engineRun);
     }
   }
   engineRun();
-
   await api.checkEngine(id).then(function (res) {
     if (res === true) isRace = false;
-  });     
-  return { date: (Date.now() - date) / 1000, car: car , raceStatus: isRace, id: car.id.slice(4)};
+  });
+  
+  return { date: (Date.now() - date) / 1000, car: car , raceStatus: isRace, id: car.id.slice(4), name: car.getAttribute("data-model-name")};
 }
 
 export async function animationReset(id: number): Promise<void> {
@@ -69,3 +71,4 @@ export async function animationReset(id: number): Promise<void> {
   car.classList.remove('animated');
   car.style.transform = `matrix(0.2, 0, 0, 0.2, 25, 5.5) scale(-1, 1)`;
 }
+
