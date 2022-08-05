@@ -2,9 +2,11 @@ import api from './api-functions';
 import randomFunc from './randomizer-funcs';
 import { animationRun } from './animations';
 import { animationReset } from './animations';
+import { animationWinner } from './animations';
 import { Winner } from './interfaces';
 import { getCarX } from './helpers';
 import { dataStorage } from './storage';
+import { getTableX } from './helpers';
 
 
 class Listeners {
@@ -78,8 +80,10 @@ class Listeners {
     const prevBtn = document.querySelector('.prev-btn');
     prevBtn?.addEventListener('click', async function() {
       let currentPage = document.querySelector('.page-num')?.textContent;
-      let actualPage = document.querySelector('.page-num')!.textContent = String(+currentPage! - 1);
-      api.getGaragePage(actualPage);
+      if (Number(currentPage) !== 1) {
+        let actualPage = document.querySelector('.page-num')!.textContent = String(+currentPage! - 1);
+        api.getGaragePage(actualPage);
+      }
     });
   }
 
@@ -103,10 +107,13 @@ class Listeners {
       arrPromis.forEach(async  function(car) {
         winner = await car;
         if (winner.raceStatus == true && checkFirstPromise == false) {
-          console.log(winner.name);
           checkFirstPromise = true;
-
           if (winner !== undefined) {
+            const resultTable: HTMLElement | null = document.querySelector('#result-table');
+            resultTable!.textContent = `Winner car is ${winner.name}`
+            animationWinner();
+
+
             await api.checkWinner(Number(+winner.id)).then(async function(res) {
               if (res !== 404) {
                 const winnerInfo = (await api.checkWinner(+winner.id)) as Winner;
@@ -144,8 +151,10 @@ class Listeners {
     const prevBtn: Element | null = document.querySelector('.winner-prev-btn');
     prevBtn?.addEventListener('click', async function() {
       let currentPage = document.querySelector('#winners-page-counter')?.textContent;
-      let actualPage = document.querySelector('#winners-page-counter')!.textContent = String(+currentPage! - 1);
-      api.getWinnersPage(actualPage);
+      if (Number(currentPage) !== 1) {
+        let actualPage = document.querySelector('#winners-page-counter')!.textContent = String(+currentPage! - 1);
+        api.getWinnersPage(actualPage);
+      }
     });
 
     const nextbtn: Element | null = document.querySelector('.winner-next-btn');

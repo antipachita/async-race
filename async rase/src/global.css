@@ -29,6 +29,7 @@ nav {
     padding: 0.5%;
     box-shadow: 1px 5px 5px #97c188;
     cursor: pointer;
+    
 }
 
 /* option-panel */
@@ -297,3 +298,23 @@ td {
     cursor: pointer;
     
 }
+
+.inactive {
+    background-color: rgb(64, 72, 79);
+    pointer-events: none;
+}
+
+/* result-animtaion */
+.content-container {
+    position: relative;
+}
+
+#result-table {
+    display: none;
+    position: fixed;
+    color: rgb(237, 0, 0);
+    top: 50%;
+    left: 0%;
+    font-size: 36px;
+}
+

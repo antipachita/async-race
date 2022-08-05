@@ -187,7 +187,7 @@ async function getWinnersPage(pageId: string = "1", sort?: string, order?: strin
   let sortOption: string = sort || "time";
   let orderOption: string = order || "DESC";
   const res = await fetch(
-    `http://127.0.0.1:3000/winners?_page=${pageId}&_limit=4&_sort=${sortOption}&_order=${orderOption}`,
+    `http://127.0.0.1:3000/winners?_page=${pageId}&_limit=10getGaragePage&_sort=${sortOption}&_order=${orderOption}`,
     {
       method: 'GET',
     },
@@ -201,6 +201,18 @@ async function getWinnersPage(pageId: string = "1", sort?: string, order?: strin
   }
 }
 
+async function updateGarageCounter():Promise<void> {
+  const resp = await fetch(
+    `http://127.0.0.1:3000/winners?_page=1&_limit=10&_sort=id&_order=ASC`,
+    {
+      method: 'GET',
+    },
+  );
+  const winersArr = await resp.json();
+  document.querySelector('#winners-counter')!.innerHTML = `Garage ${winersArr.length}`;
+}
 
 
-export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine, createWinner, getWinners, getWinnersPage, deleteWinner, checkWinner, updateWinner };
+
+
+export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine, createWinner, getWinners, getWinnersPage, deleteWinner, checkWinner, updateWinner, updateGarageCounter };

@@ -1,10 +1,9 @@
 import { Car } from './interfaces';
 import { Winner } from './interfaces';
-import api from './api-functions';
 import { CreateListeners } from './listeners';
-import { getCarX } from './helpers';
 import { createEngineRunBtn } from './animations';
 import { createEngineStopBtn } from './animations';
+import api from './api-functions';
 
 
 class Render {
@@ -53,7 +52,8 @@ class Render {
       <div class="nav-page">
         <div class="nav-page-btn prev-btn">prev</div>
         <div class="nav-page-btn next-btn">next</div>
-      </div>`
+      </div>
+      <div id="result-table">ВЫ ВЫИГРАЛИ</div>`
   }
 
 
@@ -67,7 +67,7 @@ class Render {
     </div>
     <div class="engine-btns">
       <div class="engine-run-${carObj.id} engine-btn">A</div>
-      <div class="engine-stop-${carObj.id} engine-btn">B</div>
+      <div class="engine-stop-${carObj.id} engine-btn inactive">B</div>
     </div>
     <div class="race-track">
       <div class="car-image race-track-item">
@@ -96,7 +96,7 @@ class Render {
   renderwinners(): void {
     const main: Element | null = document.querySelector('.content-container');
     main!.innerHTML = `
-    <h2 id="winners-title">Winners</h2>
+    <h2 id="winners-title">Winners: <span id="winners-counter">0</span></h2>
     <h3 id="winners-page-info">Page #<span id="winners-page-counter">1</span></h3>
     <table id="table">
       <thead>

@@ -8,6 +8,7 @@ class Winners {
   render(): void {
     render.renderwinners();
     api.getWinnersPage();
+    api.updateGarageCounter();
     CreateListeners.createScrollWinnersListener();
     CreateListeners.createSortBtnsListener();
   }
