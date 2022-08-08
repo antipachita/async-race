@@ -4,6 +4,7 @@ import { CreateListeners } from './listeners';
 import { createEngineRunBtn } from './animations';
 import { createEngineStopBtn } from './animations';
 import api from './api-functions';
+import { dataStorage } from './storage';
 
 
 class Render {
@@ -15,7 +16,7 @@ class Render {
       </nav>
     </header>
     <main class="content-container">
-    </main>`
+    </main>`;
   }
 
   renderGarage() {
@@ -23,17 +24,17 @@ class Render {
     main!.innerHTML = `
       <div class="control-panel">
         <div class="create-panel panel-item">
-          <input placeholder="input name" type="text" class="create-placeholder control-panel-item" value="" autocomplete="off">
+          <input placeholder="input name" type="text" class="create-placeholder control-panel-item" value="${dataStorage.createInputValue}" autocomplete="off">
           <div class="color-btn control-panel-item">
-            <input type="color" id="head" value="#e66465" class="input-color">
+            <input type="color" id="head" value="${dataStorage.createColorValue}" class="input-color">
             <label for="head"></label>
           </div>
           <button class="create-btn control-panel-item">CREATE</button>
         </div>
         <div class="update-panel panel-item">
-          <input placeholder="input name" type="text" class="update-placeholder control-panel-item" value="" autocomplete="off">
+          <input placeholder="input name" type="text" class="update-placeholder control-panel-item" value="${dataStorage.updateInputValue}" autocomplete="off">
           <div class="color-btn control-panel-item">
-            <input type="color" id="head value="#e66465" class="update-color">
+            <input type="color" id="head" value="${dataStorage.updateColorValue}" class="update-color">
             <label for="head"></label>
           </div>
           <button class="update-btn control-panel-item">UPDATE</button>
@@ -46,20 +47,20 @@ class Render {
       </div>
       <div class="garage">
         <div class="garage-counter">Garage 0</div>
-        <div class="page-number">Page <span class="page-num">1</span></div>
+        <div class="page-number">Page <span class="page-num">${dataStorage.pageNumber}</span></div>
         <div class="cars-container"></div>
       </div>
       <div class="nav-page">
         <div class="nav-page-btn prev-btn">prev</div>
         <div class="nav-page-btn next-btn">next</div>
       </div>
-      <div id="result-table">ВЫ ВЫИГРАЛИ</div>`
+      <div id="result-table">ВЫ ВЫИГРАЛИ</div>`;
   }
 
 
   renderCar(carObj:Car) {
-    const car: HTMLDivElement =  document.createElement("div");
-    car.classList.add("car");
+    const car: HTMLDivElement =  document.createElement('div');
+    car.classList.add('car');
     car.innerHTML = `<div class="control-car-btns">
       <div class="control-car-button select-btn" id="select-btn-${carObj.id}">SELECT</div>
       <div class="control-car-button remove-btn" id="remove-btn-${carObj.id}">REMOVE</div>
@@ -97,7 +98,7 @@ class Render {
     const main: Element | null = document.querySelector('.content-container');
     main!.innerHTML = `
     <h2 id="winners-title">Winners: <span id="winners-counter">0</span></h2>
-    <h3 id="winners-page-info">Page #<span id="winners-page-counter">1</span></h3>
+    <h3 id="winners-page-info">Page #<span id="winners-page-counter">${dataStorage.winennerPageNumber}</span></h3>
     <table id="table">
       <thead>
         <tr>

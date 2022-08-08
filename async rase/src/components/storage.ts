@@ -1,9 +1,30 @@
 class Storage {
-  engineIsRun: Array<boolean>;
+
+  pageNumber: string;
+
+  sortType: string;
+
+  orderType: string;
+
+  winennerPageNumber: string | number;
+
+  createInputValue: string;
+
+  createColorValue: string;
+
+  updateInputValue: string;
+
+  updateColorValue: string;
 
   constructor() {
-    this.engineIsRun = [];
-    
+    this.pageNumber = '1';
+    this.sortType = 'time';
+    this.orderType = 'DESC';
+    this.winennerPageNumber = '1';
+    this.createInputValue = '';
+    this.createColorValue = '#e66465';
+    this.updateInputValue = '';
+    this.updateColorValue = '#e66465';
   }
 
 }

@@ -1,6 +1,6 @@
-import {render} from './render';
+import { render } from './render';
 import api from './api-functions';
-import {CreateListeners} from './listeners';
+import { CreateListeners } from './listeners';
 
 
 class Garage {
@@ -14,6 +14,7 @@ class Garage {
     CreateListeners.createGenerateCarListener();
     CreateListeners.createRaceListener();
     CreateListeners.createResetListener();
+    CreateListeners.createInputListener();
   }
 }
 

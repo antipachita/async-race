@@ -15,3 +15,11 @@ export interface Winner {
   time: number | null;
 }
 
+export interface WinnerInfo {
+  date: number | null;
+  car: Element | null;
+  raceStatus: boolean | null;
+  id: string;
+  name: string;
+}
+
