@@ -18,11 +18,13 @@
         "node": true
     },
     "rules": {
+        "@typescript-eslint/no-unused-vars" : "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
         "no-debugger": "off",
         "@typescript-eslint/no-explicit-any": "error",
         "no-console": 0,
         "class-methods-use-this": "off",
-        "prettier/prettier": ["warn",{
+        "prettier/prettier": ["off",{
             "endOfLine": "auto"}
           ]
     }

@@ -10,7 +10,7 @@ async function updateCounter():Promise<void> {
   document.querySelector('.garage-counter')!.innerHTML = `Garage ${carsArr.length}`;
 }
 
-async function getGaragePage(pageId = '1'): Promise<void> {
+async function getGaragePage(pageId = 1): Promise<void> {
   const resp = await fetch(`http://127.0.0.1:3000/garage?_page=${dataStorage.pageNumber}&_limit=7`);
   const carsArr = await resp.json();
   const carsContainer: HTMLDivElement | null = document.querySelector('.cars-container');
@@ -19,6 +19,12 @@ async function getGaragePage(pageId = '1'): Promise<void> {
     render.renderCar(carsArr[i]);
   }
   updateCounter();
+}
+
+async function getGaragePageInfo(pageId: number): Promise<Array<Car> | undefined>  {
+  const resp = await fetch(`http://127.0.0.1:3000/garage?_page=${pageId}&_limit=7`);
+  const carsArr = await resp.json();
+  return carsArr;
 }
 
 async function getCarInfo(id: number | undefined):Promise<Car> {
@@ -55,7 +61,7 @@ async function deleteCar(id: number | undefined): Promise<void> {
       method: 'DELETE',
     });
     const currentPage = document.querySelector('.page-num')?.textContent;
-    getGaragePage(currentPage!);
+    getGaragePage(Number(currentPage!));
     updateCounter();
   } catch (err) {
     throw err;
@@ -211,4 +217,4 @@ async function updateGarageCounter():Promise<void> {
 
 
 
-export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine, createWinner, getWinners, getWinnersPage, deleteWinner, checkWinner, updateWinner, updateGarageCounter };
+export default { getGaragePage, createNewCar, deleteCar, updateCarInfo, getCarInfo, startEngine, checkEngine, stopEngine, createWinner, getWinners, getWinnersPage, deleteWinner, checkWinner, updateWinner, updateGarageCounter, getGaragePageInfo };

@@ -1,6 +1,6 @@
 import { render } from './render';
 import api from './api-functions';
-import { CreateListeners } from './listeners';
+import { listeners } from './create-listeners';
 
 
 class Winners {
@@ -9,8 +9,8 @@ class Winners {
     render.renderwinners();
     api.getWinnersPage();
     api.updateGarageCounter();
-    CreateListeners.createScrollWinnersListener();
-    CreateListeners.createSortBtnsListener();
+    listeners.createScrollWinnersListener();
+    listeners.createSortBtnsListener();
   }
 }
 

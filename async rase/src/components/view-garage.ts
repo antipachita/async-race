@@ -1,6 +1,6 @@
 import { render } from './render';
 import api from './api-functions';
-import { CreateListeners } from './listeners';
+import { listeners } from './create-listeners';
 
 
 class Garage {
@@ -8,13 +8,14 @@ class Garage {
   renderGarage(): void {
     render.renderGarage();
     api.getGaragePage();
-    CreateListeners.createAddCarListener();
-    CreateListeners.createUpdateCarListener();
-    CreateListeners.createScrollPagebtn();
-    CreateListeners.createGenerateCarListener();
-    CreateListeners.createRaceListener();
-    CreateListeners.createResetListener();
-    CreateListeners.createInputListener();
+    listeners.createAddCarListener();
+    listeners.createUpdateCarListener();
+    listeners.createTurnPagebtn();
+    listeners.createGenerateCarListener();
+    listeners.createRaceListener();
+    listeners.createResetListener();
+    listeners.Inputs();
+    listeners.changeTurnPageBtnsStyle();
   }
 }
 

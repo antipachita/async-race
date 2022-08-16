@@ -1,6 +1,6 @@
 class Storage {
 
-  pageNumber: string;
+  pageNumber: number;
 
   sortType: string;
 
@@ -16,8 +16,12 @@ class Storage {
 
   updateColorValue: string;
 
+  turnPagePrevBtnStyle: string;
+  
+  turnPageNextBtnStyle: string;
+
   constructor() {
-    this.pageNumber = '1';
+    this.pageNumber = 1;
     this.sortType = 'time';
     this.orderType = 'DESC';
     this.winennerPageNumber = '1';
@@ -25,6 +29,8 @@ class Storage {
     this.createColorValue = '#e66465';
     this.updateInputValue = '';
     this.updateColorValue = '#e66465';
+    this.turnPagePrevBtnStyle = 'inactive';
+    this.turnPageNextBtnStyle = 'inactive';
   }
 
 }

@@ -1,9 +1,8 @@
 import { Car } from './interfaces';
 import { Winner } from './interfaces';
-import { CreateListeners } from './listeners';
-import { createEngineRunBtn } from './animations';
+import { listeners } from './create-listeners';
+import { animationRun } from './animations';
 import { createEngineStopBtn } from './animations';
-import api from './api-functions';
 import { dataStorage } from './storage';
 
 
@@ -24,17 +23,17 @@ class Render {
     main!.innerHTML = `
       <div class="control-panel">
         <div class="create-panel panel-item">
-          <input placeholder="input name" type="text" class="create-placeholder control-panel-item" value="${dataStorage.createInputValue}" autocomplete="off">
+          <input placeholder="input name" type="text" class="create-placeholder control-panel-item" value="${dataStorage.createInputValue}" autocomplete="off" id="create-name">
           <div class="color-btn control-panel-item">
-            <input type="color" id="head" value="${dataStorage.createColorValue}" class="input-color">
+            <input type="color" id="create-color" value="${dataStorage.createColorValue}" class="input-color">
             <label for="head"></label>
           </div>
           <button class="create-btn control-panel-item">CREATE</button>
         </div>
         <div class="update-panel panel-item">
-          <input placeholder="input name" type="text" class="update-placeholder control-panel-item" value="${dataStorage.updateInputValue}" autocomplete="off">
+          <input placeholder="input name" type="text" class="update-placeholder control-panel-item" value="${dataStorage.updateInputValue}" autocomplete="off" id="update-name">
           <div class="color-btn control-panel-item">
-            <input type="color" id="head" value="${dataStorage.updateColorValue}" class="update-color">
+            <input type="color" id="update-color" value="${dataStorage.updateColorValue}" class="update-color">
             <label for="head"></label>
           </div>
           <button class="update-btn control-panel-item">UPDATE</button>
@@ -51,8 +50,8 @@ class Render {
         <div class="cars-container"></div>
       </div>
       <div class="nav-page">
-        <div class="nav-page-btn prev-btn">prev</div>
-        <div class="nav-page-btn next-btn">next</div>
+        <div class="nav-page-btn prev-btn ${dataStorage.turnPagePrevBtnStyle}">prev</div>
+        <div class="nav-page-btn next-btn ${dataStorage.turnPageNextBtnStyle}">next</div>
       </div>
       <div id="result-table">ВЫ ВЫИГРАЛИ</div>`;
   }
@@ -87,11 +86,7 @@ class Render {
     
     const carsContainer: HTMLDivElement | null = document.querySelector('.cars-container');
     carsContainer?.append(car);
-
-    CreateListeners.createRemoveCarListener(carObj.id, car);
-    CreateListeners.createSelectCarListener(carObj.id);
-    createEngineRunBtn(carObj.id);
-    createEngineStopBtn(carObj.id);
+    listeners.createCarListeners(carObj.id, car);
   }
 
   renderwinners(): void {

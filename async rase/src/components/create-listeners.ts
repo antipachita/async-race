@@ -2,56 +2,48 @@ import api from './api-functions';
 import randomFunc from './randomizer-funcs';
 import { animationRun } from './animations';
 import { animationReset } from './animations';
-import { animationWinner } from './animations';
+import { TableWinneranimation } from './animations';
 import { Winner } from './interfaces';
 import { Car } from './interfaces';
 import { WinnerInfo } from './interfaces';
 import { dataStorage } from './storage';
-
+import  { createInputListeners } from './listener-logic';
+import  { createSortBtnsListeners } from './listener-logic';
+import { createEngineStopBtn } from './animations';
 
 class Listeners {
 
-  createInputListener() {
-    const inputValue: HTMLInputElement | null = document.querySelector('.create-placeholder');
-    const colorValue: HTMLInputElement | null = document.querySelector('.input-color');
+  Inputs() {
+    const createInputValue: HTMLInputElement | null = document.querySelector('.create-placeholder');
+    const createColorValue: HTMLInputElement | null = document.querySelector('.input-color');
 
-    inputValue?.addEventListener('input', function (e) {
-      dataStorage.createInputValue =  inputValue.value;
-    });
+    createInputListeners(createInputValue!, createColorValue!);
 
-    colorValue?.addEventListener('input', function (e) {
-      dataStorage.createColorValue =  colorValue.value;
-    });
+    const updateInputValue: HTMLInputElement | null = document.querySelector('.update-placeholder');
+    const updateColorValue: HTMLInputElement | null = document.querySelector('.update-color');
 
-    const updateValue: HTMLInputElement | null = document.querySelector('.update-placeholder');
-    const updateColor: HTMLInputElement | null = document.querySelector('.update-color');
-
-    updateValue?.addEventListener('input', function (e) {
-      dataStorage.updateInputValue =  updateValue.value;
-    });
-
-    updateColor?.addEventListener('input', function (e) {
-      dataStorage.updateColorValue =  updateColor.value;
-    });
+    createInputListeners(updateInputValue!, updateColorValue!);
+    
   }
 
   createAddCarListener() {
-    document.querySelector('.create-btn')?.addEventListener('click', async function (e) {
+    document.querySelector('.create-btn')?.addEventListener('click', async () => {
       const inputValue: HTMLInputElement | null = document.querySelector('.create-placeholder');
       const colorValue: HTMLInputElement | null = document.querySelector('.input-color');
-      api.createNewCar(inputValue?.value, colorValue?.value);
+      await api.createNewCar(inputValue?.value, colorValue?.value);
+      await this.changeTurnPageBtnsStyle()
     });
   }
 
   async createRemoveCarListener(id: number, element: HTMLDivElement): Promise<void> {
     const removeBtn = (document.querySelector(`#remove-btn-${id}`)) as HTMLElement;
 
-    removeBtn!.addEventListener('click', async function (e:Event) {
+    removeBtn!.addEventListener('click', async (e:Event) => {
       const currentCar: HTMLDivElement = element;
       const idCar = (e.target as Element).id.slice(11);
 
       await api.deleteCar(Number(idCar));
-      await api.checkWinner(Number(idCar)).then(function (res) {
+      await api.checkWinner(Number(idCar)).then((res) => {
         if (res !== 404) {
           api.deleteWinner(Number(idCar));
           console.log('Данные победителя были удалены');
@@ -60,7 +52,7 @@ class Listeners {
         }
       });
       currentCar.remove();
-    
+      this.changeTurnPageBtnsStyle()
     });
   }
 
@@ -69,15 +61,16 @@ class Listeners {
     updateBtn?.addEventListener('click', async function () {
       const updateInputValue: HTMLInputElement | null = document.querySelector('.update-placeholder');
       const updateColorValue: HTMLInputElement | null = document.querySelector('.update-color');
-      api.updateCarInfo(Number(updateBtn.id), updateInputValue!.value, updateColorValue!.value);
-      document.querySelector(`#model-name-${updateBtn.id}`)!.textContent = updateInputValue!.value;
-      const svgCar = <SVGElement>(document.querySelector(`#car-${updateBtn.id}`)!);
+      const idCar = Number(updateBtn.id);
+      api.updateCarInfo(idCar, updateInputValue!.value, updateColorValue!.value);
+      document.querySelector(`#model-name-${idCar}`)!.textContent = updateInputValue!.value;
+      const svgCar = <SVGElement>(document.querySelector(`#car-${idCar}`)!);
       svgCar.style.fill = updateColorValue!.value; 
     });
   }
 
-  createSelectCarListener(objId: number) :void {
-    const selectBtn = (document.querySelector(`#select-btn-${objId}`)) as HTMLElement;
+  createSelectCarListener(carId: number) :void {
+    const selectBtn = (document.querySelector(`#select-btn-${carId}`)) as HTMLElement;
     selectBtn!.addEventListener('click', async function (e:Event) {
 
       const id = Number((e.target as Element).id.slice(11));
@@ -93,32 +86,41 @@ class Listeners {
     });
   }
 
-  createScrollPagebtn() :void {
+  createTurnPagebtn() :void {
     const nextBtn: Element | null = document.querySelector('.next-btn');
     nextBtn?.addEventListener('click', async function () {
       const currentPage = document.querySelector('.page-num')?.textContent;
       const actualPageNum = document.querySelector('.page-num')!.textContent = String(+currentPage! + 1);
-      dataStorage.pageNumber = actualPageNum;
-      api.getGaragePage(dataStorage.pageNumber);
+      dataStorage.pageNumber = Number(actualPageNum);
+      const checkExistPage = await api.getGaragePageInfo(dataStorage.pageNumber + 1);
+      prevBtn!.classList.remove('inactive');
+      dataStorage.turnPagePrevBtnStyle = '';
+      if (checkExistPage?.length === 0) {
+        nextBtn.classList.add('inactive');
+      }
+      await api.getGaragePage(dataStorage.pageNumber);
     });
 
     const prevBtn = document.querySelector('.prev-btn');
-    prevBtn?.addEventListener('click', async function () {
+    prevBtn?.addEventListener('click', async () => {
       const currentPage = document.querySelector('.page-num')?.textContent;
-      if (Number(currentPage) !== 1) {
         const actualPageNum = document.querySelector('.page-num')!.textContent = String(+currentPage! - 1);
-        dataStorage.pageNumber = actualPageNum;
-        api.getGaragePage(dataStorage.pageNumber);
-      }
+        dataStorage.pageNumber = Number(actualPageNum);
+        if (Number(actualPageNum) - 1 < 1) {
+          prevBtn!.classList.add('inactive');
+        }
+        await api.getGaragePage(dataStorage.pageNumber);
+        await this.changeTurnPageBtnsStyle();
     });
   }
 
   createGenerateCarListener() :void {
     const generateBtn: Element | null = document.querySelector('.generate-btn');
-    generateBtn?.addEventListener('click', async function () {
+    generateBtn?.addEventListener('click', async () => {
       for (let i = 0; i < 100; i += 1) {
-        api.createNewCar(randomFunc.randomCarName(), randomFunc.randomCarColor());
+        await (api.createNewCar(randomFunc.randomCarName(), randomFunc.randomCarColor()));
       }  
+      await this.changeTurnPageBtnsStyle();
     });
   }
 
@@ -128,7 +130,7 @@ class Listeners {
       const resp = await fetch(`http://127.0.0.1:3000/garage?_page=${currentPage}&_limit=7`).then(value => value.json());
       let checkFirstPromise = false;
       const arrPromis = [];
-      for (let i = 0; i < resp.length; i ++) { arrPromis.push(animationRun(resp[i].id)); }
+      for (let i = 0; i < resp.length; i ++) { arrPromis.push(animationRun(resp[i].id, true)); }
       arrPromis.forEach(async  function (car) {
         const winner = (await car) as WinnerInfo;
         
@@ -137,24 +139,19 @@ class Listeners {
           if (winner !== undefined) {
             const resultTable: HTMLElement | null = document.querySelector('#result-table');
             resultTable!.textContent = `Winner car is ${winner.name}`;
-            animationWinner();
-
+            TableWinneranimation();
 
             await api.checkWinner(Number(+winner.id)).then(async function (res) {
               if (res !== 404) {
                 const winnerInfo = (await api.checkWinner(+winner.id)) as Winner;
                 await api.updateWinner(+winner.id, winnerInfo.wins! + 1, winnerInfo.time! > winner.date! ? winner.date! : winnerInfo.time!);
                 console.log('Данные победителя были обновлены');
-                
               } else {
                 api.createWinner(+winner.id, winner.date!); 
                 console.log('Автомобиль внесен в список победителей');
-             
               }
             });
-            
           }
-          
         }
       });
       
@@ -195,37 +192,34 @@ class Listeners {
 
   createSortBtnsListener(): void {
     const winSorDesctBtn: Element | null = document.querySelector('#wins-up-sort-arrow');
-    winSorDesctBtn?.addEventListener('click', async function () {
-      const currentPage = document.querySelector('#winners-page-counter')?.textContent;
-      dataStorage.sortType = 'wins';
-      dataStorage.orderType = 'DESC';
-      api.getWinnersPage(currentPage!, dataStorage.sortType, dataStorage.orderType);
-    });
+    createSortBtnsListeners(winSorDesctBtn!, 'wins', 'DESC');
 
     const winSortAscBtn: Element | null = document.querySelector('#wins-down-sort-arrow');
-    winSortAscBtn?.addEventListener('click', async function () {
-      const currentPage = document.querySelector('#winners-page-counter')?.textContent;
-      dataStorage.sortType = 'wins';
-      dataStorage.orderType = 'ASC';
-      api.getWinnersPage(currentPage!, dataStorage.sortType, dataStorage.orderType);
-    });
+    createSortBtnsListeners(winSortAscBtn!, 'wins', 'ASC');
 
     const timeSorDesctBtn: Element | null = document.querySelector('#time-up-sort-arrow');
-    timeSorDesctBtn?.addEventListener('click', async function () {
-      const currentPage = document.querySelector('#winners-page-counter')?.textContent;
-      dataStorage.sortType = 'time';
-      dataStorage.orderType = 'DESC';
-      api.getWinnersPage(currentPage!, dataStorage.sortType, dataStorage.orderType);
-    });
+    createSortBtnsListeners(timeSorDesctBtn!, 'time', 'DESC');
 
     const timeSortAscBtn: Element | null = document.querySelector('#time-down-sort-arrow');
-    timeSortAscBtn?.addEventListener('click', async function () {
-      const currentPage = document.querySelector('#winners-page-counter')?.textContent;
-      dataStorage.sortType = 'time';
-      dataStorage.orderType = 'ASC';
-      api.getWinnersPage(currentPage!, dataStorage.sortType, dataStorage.orderType);
-    });
+    createSortBtnsListeners(timeSortAscBtn!, 'time', 'ASC');
+  }
+
+  async changeTurnPageBtnsStyle(): Promise<void> {
+    const currentPage = document.querySelector('.page-num')?.textContent;
+      const checkExistPage = await api.getGaragePageInfo(+currentPage! + 1);
+      if (checkExistPage?.length === 0) {
+        document.querySelector('.next-btn')!.classList.add('inactive');
+      } else {
+        document.querySelector('.next-btn')!.classList.remove('inactive');
+      }
+  }
+
+  createCarListeners (carId: number, car: HTMLDivElement):void {
+    listeners.createRemoveCarListener(carId, car);
+    listeners.createSelectCarListener(carId);
+    createEngineStopBtn(carId);
+    document.querySelector(`.engine-run-${carId}`)?.addEventListener('click', async function () {animationRun(carId, false);});
   }
 }
 
-export const CreateListeners = new Listeners();
+export const listeners = new Listeners();

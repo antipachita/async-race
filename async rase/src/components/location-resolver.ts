@@ -3,7 +3,6 @@ import { winners } from './view-winners';
 
 export function creatrlocRes(): void {
   const locationResolver = (location: string) => {
-    const main: Element | null = document.querySelector('.content-container');
     switch (location) {
       case '#/results/': 
         winners.render();

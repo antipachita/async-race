@@ -302,6 +302,7 @@ td {
 .inactive {
     background-color: rgb(64, 72, 79);
     pointer-events: none;
+    box-shadow: 1px 5px 5px #544b4b;
 }
 
 /* result-animtaion */
